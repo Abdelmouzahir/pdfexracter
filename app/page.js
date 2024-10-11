@@ -2,10 +2,20 @@
 "use client"
 import React from "react";
 import { useState } from "react";
+import * as pdfjsLib from "pdfjs-dist/build/pdf";
 
 export default function Home() {
 
    const [salaryRange, setSalaryRange] = useState("0");
+   const [formData, setFormData] = useState({
+      fname: "",
+      lname: "",
+      email: "",
+      phone: "",
+      address: "",
+      province: "", 
+      link: "",
+    });
 
 
 
@@ -22,9 +32,8 @@ export default function Home() {
           <label className="bg-slate-200 p-2 border border-gray-300 rounded cursor-pointer hover:bg-slate-300">
             <input
              type="file"
-             className="hidden"
-           />
-            Browse
+             className=""
+           />  
           </label>
         </div>
        <p className="text-center text-black-500">DOC, DOCX, PDF (2 MB)</p>
@@ -42,6 +51,8 @@ export default function Home() {
               <input
               type="text"
                className="bg-slate-200 rounded-md py-1 px-2"
+               value={formData.fname}
+               
                />
             </div>
 
@@ -50,6 +61,8 @@ export default function Home() {
                <input
                   type="text"
                   className="bg-slate-200 rounded-md py-1 px-2"
+                  value={formData.lname}
+                  
                 />
              </div>
 
@@ -58,6 +71,8 @@ export default function Home() {
                  <input
                   type="text"
                    className="bg-slate-200 rounded-md w-full py-1 px-2"
+                   value={formData.email}
+                   
                 />
               </div>
          </div>
@@ -68,6 +83,8 @@ export default function Home() {
                <input
                   type="text"
                   className="bg-slate-200 rounded-md py-1 px-2" 
+                  value={formData.phone}
+                  
                />
            </div>
 
@@ -76,6 +93,8 @@ export default function Home() {
               <input
                  type="text"
                  className="bg-slate-200 rounded-md py-1 px-2"
+                  value={formData.address}
+                  
                 />
             </div> 
             <div className=" mb-4 mt-2 ml-2 flex flex-row items-center">
@@ -83,6 +102,7 @@ export default function Home() {
             <input
                 type="text"
                 className="bg-slate-200 rounded-md py-1 px-2"
+                value={formData.province}
              />
             </div>
          </div>
@@ -92,6 +112,7 @@ export default function Home() {
               <input
                  type="text"
                  className="bg-slate-200 rounded-md py-1 px-2"
+                 value={formData.link}
                 />
             </div> 
             <div className=" mb-4 mt-2 ml-2 flex flex-row items-center">

@@ -2,10 +2,13 @@
 "use client"
 import React from "react";
 import { useState } from "react";
-import PdfParse from "pdf-parse";
+
+
 
 
 import { useRouter } from "next/navigation";
+
+
 
 
 
@@ -71,60 +74,35 @@ export default function Home() {
     }
    };
    
-      const extractDataFromResume = (text) => {
-         const data = {
-             fname: "",
-             lname: "",
-             email: "",
-             phone: "",
-             address: "",
-             province: "",
-             link: "",
-         };
-         // Extract first name
-         const fnameMatch = text.match(/(?<=Name:)(.*)(?=Email)/);
-         if (fnameMatch) {
-             data.fname = fnameMatch[0].trim();
-         }
-   
-         // Extract last name
-         const lnameMatch = text.match(/(?<=Name:)(.*)(?=Email)/);
-         if (lnameMatch) {
-             data.lname = lnameMatch[0].trim();
-         }
-   
-         // Extract email
-         const emailMatch = text.match(/(?<=Email:)(.*)(?=Phone)/);
-         if (emailMatch) {
-             data.email = emailMatch[0].trim();
-         }
-   
-         // Extract phone
-         const phoneMatch = text.match(/(?<=Phone:)(.*)(?=Address)/);
-         if (phoneMatch) {
-             data.phone = phoneMatch[0].trim();
-         }
-   
-         // Extract address
-         const addressMatch = text.match(/(?<=Address:)(.*)(?=Province)/);
-         if (addressMatch) {
-             data.address = addressMatch[0].trim();
-         }
-   
-         // Extract province
-         const provinceMatch = text.match(/(?<=Province:)(.*)(?=Link)/);
-         if (provinceMatch) {
-             data.province = provinceMatch[0].trim();
-         }
-   
-         // Extract link
-         const linkMatch = text.match(/(?<=Link:)(.*)(?=Salary)/);
-         if (linkMatch) {
-             data.link = linkMatch[0].trim();
-         }
-         return data;
+   const extractDataFromResume = (text) => {
+      // Regex patterns for each piece of information based on the provided format
+      const nameRegex = /^([A-Za-z]+)\s+([A-Za-z]+)$/m; // First and last name
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/m; // Email format
+      const addressRegex = /^([A-Za-z\s]+),$/m; // City name on its own line
+      const provinceRegex = /^(QC|ON|BC|[A-Z]{2})$/m; // Province in two uppercase letters
+      const phoneRegex = /\+?(\d{1,3})?\s?\(?(\d{3})\)?[-.\s]?(\d{3})[-.\s]?(\d{4})/m; // Phone number in different formats
+      const linkRegex = /(https?:\/\/[^\s]+)/m; // GitHub or any link starting with http/https
+    
+      const nameMatch = text.match(nameRegex);
+      const lines = text.split('\n').map(line => line.trim()); // Split text into lines
+    
+      // Find city and province by searching through lines
+      const addressMatch = lines.find(line => addressRegex.test(line));
+      const provinceMatch = lines.find(line => provinceRegex.test(line));
+    
+      return {
+        fname: nameMatch?.[1] || '', // Extracts first name
+        lname: nameMatch?.[2] || '', // Extracts last name
+        email: text.match(emailRegex)?.[0] || '', // Extracts email
+        address: addressMatch || 'Gatineau', // Extracts city from matching line
+        province: provinceMatch || 'QC', // Extracts province from matching line
+        phone: text.match(phoneRegex)?.[0] || '', // Extracts phone number
+        link: text.match(linkRegex)?.[0] || '', // Extracts GitHub or any other link
       };
-
+    };
+    
+    
+    
 
   return (
   <main className=" ml-2 min-h-screen bg-cover py-20"

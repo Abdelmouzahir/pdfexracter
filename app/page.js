@@ -4,7 +4,18 @@ import React from "react";
 import { useState } from "react";
 import * as pdfjsLib from "pdfjs-dist/build/pdf";
 
+import { useRouter } from "next/navigation";
+
+
 export default function Home() {
+
+   const router = useRouter();
+
+
+   function handleSubmit() {
+      router.push("/confirmation");
+
+   }
 
    const [salaryRange, setSalaryRange] = useState("0");
    const [formData, setFormData] = useState({
@@ -38,7 +49,7 @@ export default function Home() {
         </div>
        <p className="text-center text-black-500">DOC, DOCX, PDF (2 MB)</p>
        <div className="flex justify-center">
-          <button className=" bg-indigo-500 py-3 px-14 text-center hover:bg-indigo-800 text-white mt-4 rounded-md">
+          <button onClick={handleSubmit} className=" bg-indigo-500 py-3 px-14 text-center hover:bg-indigo-800 text-white mt-4 rounded-md">
            Submit
           </button>
        </div>

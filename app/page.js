@@ -3,6 +3,7 @@
 import React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { insertDataToDB } from "./utils/postgres";
 
 
 
@@ -13,9 +14,24 @@ export default function Home() {
 
 
    function handleSubmit() {
+      // Insert the form data to the database
+      try {
+      insertDataToDB({
+         fname: formData.fname,
+         lname: formData.lname,
+         email: formData.email,
+         phone: formData.phone,
+         address: formData.address,
+         province: formData.province,
+         link: formData.link,
+         salaryRange: salaryRange,
+      });
+      console.log("data inserted sucssefully")
       router.push("/confirmation");
-
+   } catch (error) {
+      console.error("Failed to insert data:", error);
    }
+ }
 
    const [salaryRange, setSalaryRange] = useState("0");
    const [formData, setFormData] = useState({

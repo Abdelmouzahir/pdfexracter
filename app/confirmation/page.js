@@ -4,7 +4,7 @@ import react from "react";
 export default function Confirmation() {
     return (
         <div>
-            <h1>Confirmation Page</h1>
+            <h1>Congratulations 🎉🎉! Your application Has been sent ✅. </h1>
         </div>
     )
 }

@@ -2,13 +2,16 @@
 "use client"
 import React from "react";
 import { useState } from "react";
-import * as pdfjsLib from "pdfjs-dist/build/pdf";
+import PdfParse from "pdf-parse";
+
 
 import { useRouter } from "next/navigation";
 
 
+
 export default function Home() {
 
+   
    const router = useRouter();
 
 
@@ -27,7 +30,100 @@ export default function Home() {
       province: "", 
       link: "",
     });
+   
+    const handlePDFUpload = async (event) =>{
+      const file = event.target.files[0];
+      if (file && file.type === 'application/pdf') {
+         const reader = new FileReader();
 
+         reader.onload = async function() {
+            const pdfBuffer = this.result;
+
+            //send the pdf to the server-side API for parsing
+            const response = await fetch("/api/parse-pdf", {
+               method: "POST",
+               body: pdfBuffer,
+               headers: {
+                  "Content-Type": "application/octet-stream",
+               },
+            });
+            const result = await response.json();
+
+            
+           if (result.text) {
+               const extractedData = extractDataFromResume(result.text);
+               console.log(extractedData);
+                //Update the form fields with data
+            setFormData({
+               fname: extractedData.fname || "",
+               lname: extractedData.lname  || "",
+               email: extractedData.email  || "",
+               phone: extractedData.phone || "", 
+               address: extractedData.address || "",
+               province: extractedData.province || "",
+               link: extractedData.link || "",
+            });
+           } else {
+                console.error("Failed to parse PDF")
+           }
+         };
+         reader.readAsArrayBuffer(file);
+    }
+   };
+   
+      const extractDataFromResume = (text) => {
+         const data = {
+             fname: "",
+             lname: "",
+             email: "",
+             phone: "",
+             address: "",
+             province: "",
+             link: "",
+         };
+         // Extract first name
+         const fnameMatch = text.match(/(?<=Name:)(.*)(?=Email)/);
+         if (fnameMatch) {
+             data.fname = fnameMatch[0].trim();
+         }
+   
+         // Extract last name
+         const lnameMatch = text.match(/(?<=Name:)(.*)(?=Email)/);
+         if (lnameMatch) {
+             data.lname = lnameMatch[0].trim();
+         }
+   
+         // Extract email
+         const emailMatch = text.match(/(?<=Email:)(.*)(?=Phone)/);
+         if (emailMatch) {
+             data.email = emailMatch[0].trim();
+         }
+   
+         // Extract phone
+         const phoneMatch = text.match(/(?<=Phone:)(.*)(?=Address)/);
+         if (phoneMatch) {
+             data.phone = phoneMatch[0].trim();
+         }
+   
+         // Extract address
+         const addressMatch = text.match(/(?<=Address:)(.*)(?=Province)/);
+         if (addressMatch) {
+             data.address = addressMatch[0].trim();
+         }
+   
+         // Extract province
+         const provinceMatch = text.match(/(?<=Province:)(.*)(?=Link)/);
+         if (provinceMatch) {
+             data.province = provinceMatch[0].trim();
+         }
+   
+         // Extract link
+         const linkMatch = text.match(/(?<=Link:)(.*)(?=Salary)/);
+         if (linkMatch) {
+             data.link = linkMatch[0].trim();
+         }
+         return data;
+      };
 
 
   return (
@@ -44,6 +140,8 @@ export default function Home() {
             <input
              type="file"
              className=""
+             accept="application/pdf"
+             onChange={handlePDFUpload}
            />  
           </label>
         </div>

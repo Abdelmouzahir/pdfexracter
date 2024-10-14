@@ -43,6 +43,22 @@ export const insertDataToDB = async (data) => {
     }
 };
 
+
+export const searchIfDataExist = async (data) => {
+
+    try {
+        const res = await pool.query("SELECT * FROM candidate_info WHERE email = $1", [data.email]);
+        const result = res.rows[0];
+        console.log("searched data:", result);
+        return result;
+    } catch (error) {
+        console.error("Failed to search data from the database:", error.message);
+        throw error;  // propagate the error to higher-level handlers
+    }       
+}
+
+
+
 // calling insertDataToDB and handling its result
 // const data2 = {
 //     fname: "John",

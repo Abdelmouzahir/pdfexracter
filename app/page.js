@@ -1,22 +1,15 @@
 
 "use client"
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 
 
+
+
 export default function Home() {
-
-   
    const router = useRouter();
-
-
-   function handleSubmit() {
-      // Insert the form data to the database
-      
- }
-
    const [salaryRange, setSalaryRange] = useState("0");
    const [formData, setFormData] = useState({
       fname: "",
@@ -27,6 +20,64 @@ export default function Home() {
       province: "", 
       link: "",
     });
+
+   // Fetching data from the API in frontend
+   const fetchData = async () => {
+   try {
+     const response = await fetch('/api/db');
+     const data = await response.json();
+     console.log("Fetched data:", data);
+   } catch (error) {
+     console.error("Failed to fetch data:", error);
+   }
+ };
+
+  useEffect(() => {
+   fetchData();
+  }, []);
+  
+  // inserting Data
+  const insertData = async (formData) => {
+   try {
+     const response = await fetch('/api/db', {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(formData),
+     });
+ 
+     const data = await response.json();
+     //show alert if candidate already applied
+     if (response.status === 400){
+         alert("You have already applied for this offer");
+     }
+     else {
+         router.push("/confirmation");
+     }
+     console.log("Inserted data:", data);
+   } catch (error) {
+     console.error("Failed to insert data:", error);
+   }
+ };
+
+
+   function handleSubmit() {
+      
+      insertData({
+         fname: formData.fname,
+         lname: formData.lname,
+         email: formData.email,
+         phone: formData.phone,
+         address: formData.address,
+         province: formData.province,
+         link: formData.link,
+         salary: salaryRange,
+      });
+      
+ }
+
+   
    
     const handlePDFUpload = async (event) =>{
       const file = event.target.files[0];

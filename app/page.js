@@ -3,6 +3,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+
 
 
 
@@ -50,7 +52,7 @@ export default function Home() {
      const data = await response.json();
      //show alert if candidate already applied
      if (response.status === 400){
-         alert("You have already applied for this offer");
+      Swal.fire("You have already applied for this offer");
      }
      else {
          router.push("/confirmation");
